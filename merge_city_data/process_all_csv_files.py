@@ -112,6 +112,39 @@ class Main():
 
         "Deçan" : "Kosovo",
 
+
+
+        "Vushtrri" : "Kosovo",
+        "Istok" : "Kosovo",
+        "Podujeva" : "Kosovo",
+
+        "Shtime" : "Kosovo",
+        "Dragash" : "Kosovo",
+        "Peć" : "Kosovo",
+
+        "Vitina" : "Kosovo",
+
+        "Orahovac" : "Kosovo",
+
+
+        "Obiliq" : "Kosovo",
+
+        "Leposaviq" : "Kosovo",
+
+        "Kosovo Polje" : "Kosovo",
+        "Zvečan" : "Kosovo",
+        "Llazicë" : "Kosovo",
+
+
+
+
+
+
+
+        "Dzaoudzi" : "France",
+        "Koungou" : "France",
+
+
     }
 
 
@@ -120,6 +153,17 @@ class Main():
 
     # All matches on the left, will be replaced by the value on the right.... many islands etc simplified to their main owner, like France for instance
     country_name_correct = {
+
+
+        "St. Lucia" : "Saint Lucia",
+
+        "Jersey" : "Channel Islands",
+
+        "Guernsey" : "Channel Islands",
+
+
+        "St. Vincent and the Grenadines" : "Saint Vincent and the Grenadines",
+
 
 
         "Guadeloupe" : "France",
@@ -372,34 +416,40 @@ class Main():
             population = row[keys['Population']]
             population = int(population)
 
-            gdp_link = None
+            country_gdp = None
 
 
             try:
-                # gdp_link = self.country_code_to_gdp[country_code]
-                gdp_link = self.country_name_to_gdp[country_name]
+                country_gdp = self.country_name_to_gdp[country_name]
 
             except:
+                pass
 
-                # print("nod gdp found: ", country_name)
 
+            country_population = None
+            try:
+                country_population = self.country_name_to_pop[country_name]
+            except:
                 pass
 
 
 
 
+
             if population >= self.min_population:
-                # print("{}  {} {}  {}".format(name,country_name,population,gdp_link))
 
                 self.cities_count += 1
 
-                if gdp_link == None:
-                    print("No GDP found for city \"{}\" looking for country  \"{}\"" .format(  name, country_name))
+                if country_population == None:
+                    print("no country population found for country {} , {}".format(name, country_name))
+                if country_gdp == None:
+                    print("no country gdp found for country {} , {}".format(name, country_gdp))
+
 
 
                 if self.csv_writer:
 
-                    self.csv_writer.writerow([name, longitude, latitude, population, country_name, gdp_link])
+                    self.csv_writer.writerow([name, longitude, latitude, population, country_name, country_gdp])
                     pass
                 
 
@@ -413,7 +463,7 @@ class Main():
 
 
 
-    country_name_to_gdp = {}
+    country_name_to_pop = {}
 
     def countries_pop_data_csv_predicate(self, i , row, keys):
 
@@ -422,6 +472,11 @@ class Main():
 
 
             country_name = row[keys['Country Name']]
+
+
+            if country_name in self.country_name_correct: # correct country_name
+                country_name = self.country_name_correct[country_name]
+
 
             country_population = row[keys['2020']]
 
@@ -432,19 +487,22 @@ class Main():
                 print("error getting population of:", country_name)
                 country_population = 0
 
-            if country_name in self.country_name_correct: # correct country_name
-                country_name = self.country_name_correct[country_name]
+            
 
 
-            self.country_name_to_gdp[country_name] = country_population
+            self.country_name_to_pop[country_name] = country_population
 
 
             # print("{}  {} ".format(country_name,country_population))
 
 
+    """
+    
+
+    """
 
 
-    min_population = 50000
+    min_population = 15000
 
 
 
@@ -454,7 +512,7 @@ class Main():
     countries_pop_data = "API_SP.POP.TOTL_DS2_en_csv_v2_3358390.csv"
 
 
-    output_filename = "MERGED_CITY_DATA.csv"
+    output_filename = "MERGED_CITY_DATA.output.csv"
 
 
 
@@ -463,14 +521,22 @@ class Main():
 
     def __init__(self):
 
+        print("RUNNING SCRIPT...")
+
+        print("scan countries pop data...")
+
+
         # GET country_name_to_gdp dict
         self.read_csv_file(self.countries_pop_data,self.countries_pop_data_csv_predicate, 4, delimiter=',',max_records = 1000000)
 
+        print("scan countries gdp data...")
 
         # GET country_name_to_gdp
         self.read_csv_file(self.countries_gdp_data,self.countries_gdp_data_predicate, 4, delimiter=',',max_records = 1000000)
 
 
+
+        print("scan cities pop data...")
 
         self.csv_writer = csv.writer(open(self.output_filename, 'w', newline='',encoding='utf-8'))
 
