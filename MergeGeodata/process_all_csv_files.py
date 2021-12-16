@@ -20,7 +20,13 @@ size: 256 KB
 
 
 
-take the world data, format it to just 2020 GDP:
+
+Population (countries):
+https://data.worldbank.org/indicator/SP.POP.TOTL?view=chart
+
+
+filename: API_SP.POP.TOTL_DS2_en_csv_v2_3358390.csv
+size: 179 KB
 
 
 
@@ -35,14 +41,57 @@ import csv
 
 class Main():
 
+    # some entries for countries are simply empty for the smaller settlements
     override_country_for_city = {
 
-        "Pristina" : "Kosovo"
+        "Pristina" : "Kosovo",
 
+        "Mitrovica" : "Kosovo",
+
+        "Mitrovicë" : "Kosovo",
+
+        "Prizren" : "Kosovo",
+
+
+
+        "Willemstad" : "Curacao",
+
+
+
+        "Gjilan" : "Kosovo",
+
+
+        "Gjakovë" : "Kosovo",
+
+        "Glogovac" : "Kosovo",
+
+        "Ferizaj" : "Kosovo",
+
+
+        "Mamoudzou" : "Mozambique", # NOT TRUE?
+
+
+        "Suva Reka" : "Kosovo",
+
+        "Deçan" : "Kosovo",
 
     }
 
+
+    # these names will override existing names, simplifying them for example like to "South Korea" just "Congo" etc.... preffering common names over official
+    # in some cases we have no GDP for Taiwan for example, this data being for a videogame will assume Taiwan is in China
     country_name_correct = {
+
+
+        "Guadeloupe" : "France",
+        "French Guiana" : "France",
+        "Martinique" : "France",
+        "Mayotte" : "France",
+
+
+        "Lao PDR" : "Laos",
+
+
         "Egypt, Arab Rep.": "Egypt",
 
         "Iran, Islamic Rep. of" : "Iran",
@@ -122,7 +171,26 @@ class Main():
         "Bahamas, The" : "Bahamas",
 
 
-        "Swaziland" : "Eswatini",
+        "Eswatini" : "Swaziland",
+
+
+
+        "Western Sahara" : "Morocco",
+
+
+        "Réunion" : "France",
+
+
+        "Cabo Verde" : "Cape Verde",
+
+
+        "Lao People's Dem. Rep." : "Laos",
+
+
+
+        "Virgin Islands (US)" : "Virgin Islands",
+
+        "Virgin Islands (U.S.)" : "Virgin Islands",
 
     }
 
@@ -177,7 +245,7 @@ class Main():
     country_name_to_gdp = {}
 
 
-    def counties_gdp_data_predicate(self,i, row, keys):
+    def countries_gdp_data_predicate(self,i, row, keys):
 
         # print("gg")
 
@@ -306,13 +374,45 @@ class Main():
 
 
 
+    country_name_to_gdp = {}
 
-    min_population = 200000
+    def countries_pop_data_csv_predicate(self, i , row, keys):
 
 
-    counties_gdp_data =  "API_NY.GDP.MKTP.CD_DS2_en_csv_v2_3358362.csv" # comma
+        if len(row) > 1:
+
+
+            country_name = row[keys['Country Name']]
+
+            country_population = row[keys['2020']]
+
+            try:
+                country_population = int(country_population)
+            except:
+
+                print("error getting population of:", country_name)
+                country_population = 0
+
+            if country_name in self.country_name_correct: # correct country_name
+                country_name = self.country_name_correct[country_name]
+
+
+            self.country_name_to_gdp[country_name] = country_population
+
+
+            # print("{}  {} ".format(country_name,country_population))
+
+
+
+
+    min_population = 50000
+
+
 
     cities_pop_data_csv =  "geonames-all-cities-with-a-population-1000.csv" # semicolonb
+
+    countries_gdp_data =  "API_NY.GDP.MKTP.CD_DS2_en_csv_v2_3358362.csv" # comma
+    countries_pop_data = "API_SP.POP.TOTL_DS2_en_csv_v2_3358390.csv"
 
 
     output_filename = "MERGED_CITY_DATA.csv"
@@ -324,21 +424,31 @@ class Main():
 
     def __init__(self):
 
+        # GET country_name_to_gdp dict
+        self.read_csv_file(self.countries_pop_data,self.countries_pop_data_csv_predicate, 4, delimiter=',',max_records = 1000000)
+
+
+        # GET country_name_to_gdp
+        self.read_csv_file(self.countries_gdp_data,self.countries_gdp_data_predicate, 4, delimiter=',',max_records = 1000000)
+
+
 
         self.csv_writer = csv.writer(open(self.output_filename, 'w', newline='',encoding='utf-8'))
 
         self.csv_writer.writerow(['name', 'longitude', 'latitude', 'population', 'country_name', 'country_gdp'])
 
-
-
-
-        self.read_csv_file(self.counties_gdp_data,self.counties_gdp_data_predicate, 4, delimiter=',',max_records = 1000000)
-
-        
-
         self.read_csv_file(self.cities_pop_data_csv,self.cities_pop_data_csv_predicate, 0, delimiter=';',max_records = 1000000)
 
         print("cities_count: ",self.cities_count)
+
+
+
+        
+
+
+
+
+
 
 
 
