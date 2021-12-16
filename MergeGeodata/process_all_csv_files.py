@@ -101,6 +101,29 @@ class Main():
 
         "Kyrgyz Republic" : "Kyrgyzstan",
 
+
+        "West Bank and Gaza Strip" : "Israel", # Palestine has made peace so it has the same gdp!
+
+        "Slovak Republic" : "Slovakia",
+
+        "South Sudan, The Republic of" : "South Sudan",
+
+
+
+        
+
+        "Macedonia, The former Yugoslav Rep. of" : "North Macedonia",
+
+
+
+        "Gambia, The" : "Gambia",
+
+
+        "Bahamas, The" : "Bahamas",
+
+
+        "Swaziland" : "Eswatini",
+
     }
 
 
@@ -258,7 +281,7 @@ class Main():
 
 
 
-            if population > 500000:
+            if population >= self.min_population:
                 # print("{}  {} {}  {}".format(name,country_name,population,gdp_link))
 
                 self.cities_count += 1
@@ -279,6 +302,12 @@ class Main():
 
             # print("{}   {}  {}  {}".format(i,name,country_name,population))
             pass
+
+
+
+
+
+    min_population = 200000
 
 
     counties_gdp_data =  "API_NY.GDP.MKTP.CD_DS2_en_csv_v2_3358362.csv" # comma
