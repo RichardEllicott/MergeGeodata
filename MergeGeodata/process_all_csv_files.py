@@ -35,11 +35,55 @@ import csv
 
 class Main():
 
-    thisdict = {
-        "brand": "Ford",
-        "model": "Mustang",
-        "year": 1964
+    country_name_correct = {
+        "Egypt, Arab Rep.": "Egypt",
+
+        "Iran, Islamic Rep. of" : "Iran",
+
+
+        "Iran, Islamic Rep." : "Iran",
+
+
+        "Korea, Rep." : "South Korea",
+        "Korea, Republic of" : "South Korea",
+
+
+        "Viet Nam" : "Vietnam",
+
+
+        "Hong Kong, China" : "China",
+
+
+        "Tanzania, United Republic of" : "Tanzania",
+
+        "Congo, Democratic Republic of the" : "Congo",
+        "Congo, Dem. Rep." : "Congo",
+
+
+        "Korea, Dem. People's Rep." : "North Korea",
+        "Korea, Dem. People's Rep. of" : "North Korea",
+
+
+        "Venezuela, Bolivarian Rep. of" : "Venezuela",
+
+        "Venezuela, RB" : "Venezuela",
+
+
+        "Taiwan, China" : "China", # sorry Taiwan!
+
+
+
+        "Cote d'Ivoire" : "Côte d'Ivoire", # Ivory Coast
+
+
+        
+
+
+
     }
+
+
+
 
 
 
@@ -97,6 +141,13 @@ class Main():
 
 
             country_name = row[keys['Country Name']]
+
+
+            if country_name in self.country_name_correct: # correct country_name
+                country_name = self.country_name_correct[country_name]
+
+
+
             country_code = row[keys['Country Code']]
             gdp_2020 = row[keys['2020']]
 
@@ -139,6 +190,11 @@ class Main():
             name = row[keys['Name']]
 
             country_name = row[keys['Country name EN']]
+
+
+            if country_name in self.country_name_correct: # correct country_name
+                country_name = self.country_name_correct[country_name]
+
             
 
             country_code = row[keys['Country Code']]
@@ -162,7 +218,7 @@ class Main():
 
 
 
-            if population > 2000000:
+            if population > 1000000:
                 # print("{}  {} {}  {}".format(name,country_name,population,gdp_link))
 
                 self.cities_count += 1
