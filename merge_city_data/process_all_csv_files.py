@@ -31,6 +31,34 @@ size: 179 KB
 
 
 
+Not all data matches up perfectly. Taiwan seems missing in GDP. The owner of the west bank is unclear. As this data is being used for a videogame we make incorrect assumptions and corrections in this edge cases.
+Taiwan becomes part of China
+Palestine part of Israel
+Other mistakes may exist with conflict regions.
+etc
+
+Our objective with this data was to figure the worlds most important cities. These would be used for an X-Com like game.
+
+
+
+
+
+
+Thusly counties will have a psedo-alliance.
+This reflects for instance how the west tends to stick together and agree with one another.
+Russia, China and other communist type countries also tend to stick together
+
+
+
+
+
+
+Searching for a world map:
+https://upload.wikimedia.org/wikipedia/commons/4/4a/World_map_with_four_colours.svg
+
+
+
+
 """
 import csv
 
@@ -40,8 +68,17 @@ import csv
 
 
 class Main():
+    """
 
-    # some entries for countries are simply empty for the smaller settlements
+    all processing included in this one once object, it is a little complicated however by using high order functions with the read_csv_file function we re-use code
+
+
+    using this pattern avoids loading the entire files into memory which is not practical at these file size, instead we iterate the file performing actions
+
+
+    """
+
+    # some entries for countries are simply empty in the city data, especially Kosovo
     override_country_for_city = {
 
         "Pristina" : "Kosovo",
@@ -80,6 +117,8 @@ class Main():
 
     # these names will override existing names, simplifying them for example like to "South Korea" just "Congo" etc.... preffering common names over official
     # in some cases we have no GDP for Taiwan for example, this data being for a videogame will assume Taiwan is in China
+
+    # All matches on the left, will be replaced by the value on the right.... many islands etc simplified to their main owner, like France for instance
     country_name_correct = {
 
 
