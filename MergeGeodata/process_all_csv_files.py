@@ -35,6 +35,13 @@ import csv
 
 class Main():
 
+    override_country_for_city = {
+
+        "Pristina" : "Kosovo"
+
+
+    }
+
     country_name_correct = {
         "Egypt, Arab Rep.": "Egypt",
 
@@ -76,9 +83,23 @@ class Main():
         "Cote d'Ivoire" : "Côte d'Ivoire", # Ivory Coast
 
 
+        "Yemen, Rep." : "Yemen",
+
         
 
+        "Sudan, The Republic of" : "Sudan",
 
+
+
+        "Libyan Arab Jamahiriya" : "Libya",
+
+
+        "Macau, China" : "China",
+
+        "Moldova, Republic of" : "Moldova",
+
+
+        "Kyrgyz Republic" : "Kyrgyzstan",
 
     }
 
@@ -189,11 +210,30 @@ class Main():
 
             name = row[keys['Name']]
 
+            
+            Coordinates = row[keys['Coordinates']]
+            Coordinates = Coordinates.split(',')
+
+            # print(Coordinates)
+
+
+            latitude = Coordinates[0]
+            longitude = Coordinates[1]
+
+
+
+
+
             country_name = row[keys['Country name EN']]
 
 
             if country_name in self.country_name_correct: # correct country_name
                 country_name = self.country_name_correct[country_name]
+
+
+
+            if name in self.override_country_for_city: # certain cities need correcting on owner
+                country_name = self.override_country_for_city[name]
 
             
 
@@ -218,13 +258,19 @@ class Main():
 
 
 
-            if population > 1000000:
+            if population > 500000:
                 # print("{}  {} {}  {}".format(name,country_name,population,gdp_link))
 
                 self.cities_count += 1
 
                 if gdp_link == None:
                     print("No GDP found for city \"{}\" looking for country  \"{}\"" .format(  name, country_name))
+
+
+                if self.csv_writer:
+
+                    self.csv_writer.writerow([name, longitude, latitude, population, country_name, gdp_link])
+                    pass
                 
 
 
@@ -237,19 +283,28 @@ class Main():
 
     counties_gdp_data =  "API_NY.GDP.MKTP.CD_DS2_en_csv_v2_3358362.csv" # comma
 
-    cities_pop_data_csv =  "geonames-all-cities-with-a-population-1000.csv" # semicolon
+    cities_pop_data_csv =  "geonames-all-cities-with-a-population-1000.csv" # semicolonb
+
+
+    output_filename = "MERGED_CITY_DATA.csv"
+
+
+
+    csv_writer = None
 
 
     def __init__(self):
 
-        
+
+        self.csv_writer = csv.writer(open(self.output_filename, 'w', newline='',encoding='utf-8'))
+
+        self.csv_writer.writerow(['name', 'longitude', 'latitude', 'population', 'country_name', 'country_gdp'])
+
+
+
 
         self.read_csv_file(self.counties_gdp_data,self.counties_gdp_data_predicate, 4, delimiter=',',max_records = 1000000)
 
-
-
-
-    
         
 
         self.read_csv_file(self.cities_pop_data_csv,self.cities_pop_data_csv_predicate, 0, delimiter=';',max_records = 1000000)
