@@ -391,8 +391,8 @@ class Main():
             # print(Coordinates)
 
 
-            latitude = Coordinates[0]
-            longitude = Coordinates[1]
+            latitude = Coordinates[1]
+            longitude = Coordinates[0]
 
 
 
@@ -502,7 +502,7 @@ class Main():
     """
 
 
-    min_population = 15000
+    min_population = 50000
 
 
 
@@ -513,7 +513,6 @@ class Main():
 
 
     output_filename = "MERGED_CITY_DATA.output.csv"
-
 
 
     csv_writer = None
@@ -538,12 +537,12 @@ class Main():
 
         print("scan cities pop data...")
 
-        self.csv_writer = csv.writer(open(self.output_filename, 'w', newline='',encoding='utf-8'))
 
+        # UNCOMMENT TO WRITE CSV
+        self.csv_writer = csv.writer(open(self.output_filename, 'w', newline='',encoding='utf-8'))
         self.csv_writer.writerow(['name', 'longitude', 'latitude', 'population', 'country_name', 'country_gdp'])
 
         self.read_csv_file(self.cities_pop_data_csv,self.cities_pop_data_csv_predicate, 0, delimiter=';',max_records = 1000000)
-
         print("cities_count: ",self.cities_count)
 
 

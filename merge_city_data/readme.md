@@ -49,6 +49,12 @@ https://map-projections.net/svg-worldmap/
 
 
 
+https://upload.wikimedia.org/wikipedia/commons/4/4a/World_map_with_four_colours.svg
+
+
+
+drawing maps with python:
+https://jakevdp.github.io/PythonDataScienceHandbook/04.13-geographic-data-with-basemap.html
 
 
 
