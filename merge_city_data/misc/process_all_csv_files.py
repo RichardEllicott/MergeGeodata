@@ -212,7 +212,8 @@ class Main():
 
 
 
-        "Cote d'Ivoire" : "Côte d'Ivoire", # Ivory Coast
+        "Cote d'Ivoire" : "Ivory Coast", # Ivory Coast
+        "Côte d'Ivoire" : "Ivory Coast",
 
 
         "Yemen, Rep." : "Yemen",
@@ -263,8 +264,6 @@ class Main():
 
         "Réunion" : "France",
 
-
-        "Cabo Verde" : "Cape Verde",
 
 
         "Lao People's Dem. Rep." : "Laos",
@@ -449,7 +448,7 @@ class Main():
 
                 if self.csv_writer:
 
-                    self.csv_writer.writerow([name, longitude, latitude, population, country_name, country_gdp])
+                    self.csv_writer.writerow([name, longitude, latitude, population, country_name, country_gdp,country_population])
                     pass
                 
 
@@ -478,19 +477,28 @@ class Main():
                 country_name = self.country_name_correct[country_name]
 
 
-            country_population = row[keys['2020']]
+            country_population = None
 
-            try:
-                country_population = int(country_population)
-            except:
+            for i in range(20):
 
-                print("error getting population of:", country_name)
-                country_population = 0
+                entry = row[len(row)-1-i] # last column counting backwards
 
+                if entry != "":
+
+
+                    country_population = int(entry)
+                    break
+                else:
+                    # print("WARNING no population found {}".format(country_name))
+                    pass
+
+            if country_population == None:
+
+                print("WARNING no population found for country \"{}\"".format(country_name))
+
+            else:
             
-
-
-            self.country_name_to_pop[country_name] = country_population
+                self.country_name_to_pop[country_name] = country_population
 
 
             # print("{}  {} ".format(country_name,country_population))
@@ -502,7 +510,7 @@ class Main():
     """
 
 
-    min_population = 50000
+    min_population = 500000
 
 
 
@@ -519,6 +527,13 @@ class Main():
 
 
     def __init__(self):
+
+        self.script1()
+
+        pass
+
+
+    def script1(self):
 
         print("RUNNING SCRIPT...")
 
@@ -540,7 +555,7 @@ class Main():
 
         # UNCOMMENT TO WRITE CSV
         self.csv_writer = csv.writer(open(self.output_filename, 'w', newline='',encoding='utf-8'))
-        self.csv_writer.writerow(['name', 'longitude', 'latitude', 'population', 'country_name', 'country_gdp'])
+        self.csv_writer.writerow(['name', 'longitude', 'latitude', 'population', 'country_name', 'country_gdp','country_population'])
 
         self.read_csv_file(self.cities_pop_data_csv,self.cities_pop_data_csv_predicate, 0, delimiter=';',max_records = 1000000)
         print("cities_count: ",self.cities_count)
@@ -548,6 +563,31 @@ class Main():
 
 
         
+        # EXTRA
+        csv_writer2 = csv.writer(open("META_EXTRA.generated.csv", 'w', newline='',encoding='utf-8'))
+        csv_writer2.writerow(['name', 'gdp', 'pop', 'gdp_div_pop'])
+        for key in self.country_name_to_gdp:
+
+            gdp = self.country_name_to_gdp[key]
+
+
+            if key in self.country_name_to_pop:
+                pop = self.country_name_to_pop[key]
+            else:
+                print("WARNING no key {} in self.country_name_to_pop".format(key))
+
+
+            if gdp <= 0:
+                print('WARNING: no gdp found for {} '.format(key))
+                print(gdp, " ", pop)
+
+            gdp_div_pop = gdp/pop
+
+            csv_writer2.writerow([key, gdp, pop,gdp_div_pop])
+
+
+            print("{} {} {} ".format(key,gdp,pop))
+
 
 
 
