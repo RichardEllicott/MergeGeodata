@@ -60,6 +60,13 @@ https://jakevdp.github.io/PythonDataScienceHandbook/04.13-geographic-data-with-b
 
 
 
+LATEST RESULTS, have generated a list of cities by "significance", this takes the city population, and multiplies it by the country gdp/capita
+these are the most "significant cities" good for a geopolitical videogame
+New York City, London, Tokyo....
+
+
+
+
 
 
 
