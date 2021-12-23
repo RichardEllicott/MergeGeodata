@@ -61,10 +61,6 @@ class Main():
 
     output_filename2 = "PROCESS_ALL_DATA_SCRIPT_V3.OUTPUT.SORTED.csv"
 
-
-
-
-
     def script1_load_corrections(self):
 
         for raw in csv.DictReader(open("PROCESS_ALL_DATA_SCRIPT_V3_override_country_for_city.csv", encoding='utf-8')):
@@ -143,8 +139,15 @@ class Main():
 
         writer = csv.DictWriter(
             open(self.output_filename, 'w', encoding='utf-8', newline=''),
-            fieldnames=['name', 'longitude', 'latitude',
-                        'population', 'significance'],
+            fieldnames=[
+                'name',
+                # 'geoname_id',
+                'longitude',
+                'latitude',
+                'elevation',
+                'population',
+                'significance'
+            ],
 
         )
         writer.writeheader()
@@ -160,6 +163,10 @@ class Main():
 
             name = raw['Name']
             population = int(raw['Population'])
+
+            elevation = raw['Elevation']
+
+            geoname_id = raw['Geoname ID']
 
             coor = raw['Coordinates'].split(',')
 
@@ -212,15 +219,16 @@ class Main():
 
                     if significance > 1:
 
-                        print("{} is significance with {:.0f}".format(
-                            name, significance))
+                        # print("{} is significance with {:.0f}".format(name, significance))
 
                         valid_city_count += 1
 
                         writer.writerow({
                             'name': name,
+                            # 'geoname_id' : geoname_id,
                             'longitude': longitude,
                             'latitude': latitude,
+                            'elevation': elevation,
                             'population': population,
                             'significance': round(significance),
                         })
@@ -238,48 +246,39 @@ class Main():
 
         print("valid_city_count:", valid_city_count)
 
-    def script3_sort_data(self):
+    def sort_csv_file(self, filename, output_filename, column_name):
 
-        print("RUN ME")
-
-        reader = csv.DictReader(open(self.output_filename, encoding='utf-8'))
+        reader = csv.DictReader(open(filename, encoding='utf-8'))
+        list_of_dicts = list(reader)
 
         writer = csv.DictWriter(
             open(self.output_filename2, 'w', encoding='utf-8', newline=''),
-            fieldnames=['name', 'longitude', 'latitude',
-                        'population', 'significance'],
+            fieldnames=list_of_dicts[0].keys()
 
         )
         writer.writeheader()
 
-        list_of_dicts = list(reader)
-
         def my_sort(e):
 
-            return float(e['significance'])
+            return float(e[column_name])
 
-        list_of_dicts.sort(key=my_sort,reverse=True)
+        list_of_dicts.sort(key=my_sort, reverse=True)
 
         for raw in list_of_dicts:
-            # print(raw)
 
-            name = raw['name']
+            writer.writerow(raw)
 
-            writer.writerow({
-                'name': raw['name'],
-                'longitude': raw['longitude'],
-                'latitude': raw['latitude'],
-                'population': raw['population'],
-                'significance': raw['significance'],
-            })
+        pass
 
     def __init__(self):
 
-        # self.script1_load_corrections() # loads my correction csv
-        # self.script2_load_world_bank_data()
-        # self.script3_load_cities() # REQUIRES PREVIOUS DATA, SAVES A FILE  takes about 4 seconds
+        self.script1_load_corrections()  # loads my correction csv
+        self.script2_load_world_bank_data()
+        # REQUIRES PREVIOUS DATA, SAVES A FILE  takes about 4 seconds
+        self.script3_load_cities()
 
-        self.script3_sort_data()
+        self.sort_csv_file(self.output_filename,
+                           self.output_filename2, 'significance')
 
 
 Main()
