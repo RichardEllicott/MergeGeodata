@@ -49,9 +49,9 @@ class Main():
 
     max_records = 1000000000  # only set low to debug
 
-    min_population = 100000
+    min_population = 500000
 
-    min_significance = 1000
+    min_significance = 0
 
     override_country_for_city = {}
 
@@ -68,6 +68,10 @@ class Main():
 
         for raw in csv.DictReader(open("country_name_corrections.csv", encoding='utf-8')):
             self.country_name_corrections[raw['from']] = raw['to']
+
+
+
+
 
         # print("override_country_for_city:",self.override_country_for_city,"\n")
         # print("country_name_corrections:",self.country_name_corrections,"\n")
@@ -133,6 +137,14 @@ class Main():
         self.gdp_data = self.handle_world_bank_csv(
             "API_NY.GDP.MKTP.CD_DS2_en_csv_v2_3358362.csv", "gdp")
 
+
+        for raw in csv.DictReader(open("mydata_missing_gdp.csv", encoding='utf-8')): # load my corrections file
+            # print(raw)
+            self.population_data[raw['country']] = float(raw['population'])
+            self.gdp_data[raw['country']] = float(raw['gdp'])
+
+
+
     def script3_load_cities(self):
 
         valid_city_count = 0
@@ -141,10 +153,11 @@ class Main():
             open(self.output_filename, 'w', encoding='utf-8', newline=''),
             fieldnames=[
                 'name',
+                'country_name',
                 # 'geoname_id',
                 'longitude',
                 'latitude',
-                'elevation',
+                # 'elevation',
                 'population',
                 'significance'
             ],
@@ -179,16 +192,12 @@ class Main():
 
             country_gpd_per_capita = None
 
-            city_significance = 0.0
-
             country_name = raw['Country name EN']
 
             if country_name in self.country_name_corrections:
 
                 # print("correcting \"{}\" to \"{}\"".format(country_name, self.country_name_corrections[country_name]))
                 country_name = self.country_name_corrections[country_name]
-
-            timezone = raw['Timezone']
 
             # only bother to report these errors and process further if over population theshold
             if population >= self.min_population:
@@ -225,10 +234,11 @@ class Main():
 
                         writer.writerow({
                             'name': name,
+                            'country_name': country_name,
                             # 'geoname_id' : geoname_id,
                             'longitude': longitude,
                             'latitude': latitude,
-                            'elevation': elevation,
+                            # 'elevation': elevation,
                             'population': population,
                             'significance': round(significance),
                         })
@@ -253,9 +263,7 @@ class Main():
 
         writer = csv.DictWriter(
             open(self.output_filename2, 'w', encoding='utf-8', newline=''),
-            fieldnames=list_of_dicts[0].keys()
-
-        )
+            fieldnames=list_of_dicts[0].keys())
         writer.writeheader()
 
         def my_sort(e):
@@ -274,11 +282,17 @@ class Main():
 
         self.script1_load_corrections()  # loads my correction csv
         self.script2_load_world_bank_data()
-        # REQUIRES PREVIOUS DATA, SAVES A FILE  takes about 4 seconds
-        self.script3_load_cities()
+        
+        self.script3_load_cities() # REQUIRES PREVIOUS DATA, SAVES A FILE  takes about 4 seconds
 
-        self.sort_csv_file(self.output_filename,
-                           self.output_filename2, 'significance')
+
+        # self.sort_csv_file(self.output_filename,self.output_filename2, 'significance')
+        self.sort_csv_file(self.output_filename,self.output_filename2, 'population')
+
+
+
+
+        
 
 
 Main()
