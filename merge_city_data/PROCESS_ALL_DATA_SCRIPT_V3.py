@@ -49,7 +49,7 @@ class Main():
 
     max_records = 1000000000  # only set low to debug
 
-    min_population = 500000
+    min_population = 10000
 
     min_significance = 0
 
@@ -145,9 +145,13 @@ class Main():
 
 
 
+
+
     def script3_load_cities(self):
 
-        valid_city_count = 0
+        self.featured_countries = set() # null ref dict to track featured countries
+
+        self.valid_city_count = 0
 
         writer = csv.DictWriter(
             open(self.output_filename, 'w', encoding='utf-8', newline=''),
@@ -230,7 +234,9 @@ class Main():
 
                         # print("{} is significance with {:.0f}".format(name, significance))
 
-                        valid_city_count += 1
+                        self.valid_city_count += 1
+
+                        self.featured_countries.add(country_name)
 
                         writer.writerow({
                             'name': name,
@@ -254,7 +260,77 @@ class Main():
             if i >= self.max_records:
                 break
 
-        print("valid_city_count:", valid_city_count)
+
+
+    def script4_analyse_countries(self):
+
+
+        output_filename6 = "output_countries_of_world.gen.csv"
+        output_filename7 = "output_countries_of_world.gen2.csv"
+
+
+        # EXTRA CHECK STUFF:
+        print("valid_city_count:", self.valid_city_count)
+
+        print("featured_countries: ", self.featured_countries)
+
+        print("featured_countries count: ", len(self.featured_countries))
+
+
+        writer = csv.DictWriter(
+            open(output_filename6, 'w', encoding='utf-8', newline=''),
+            fieldnames=[
+                'country',
+                'population',
+                'gdp',
+            ],
+
+        )
+        writer.writeheader()
+
+
+        records = []
+
+        for country in self.featured_countries:
+
+            gdp = None 
+            population = None
+
+            if country in self.gdp_data:
+                gdp = self.gdp_data[country]
+            else:
+                print("NO gdp FOR %s" % [country])
+
+            if country in self.population_data:
+                population = self.population_data[country]
+            else:
+                print("NO population FOR %s" % [country])
+
+
+            records.append({
+                'country': country,
+                'population': population,
+                'gdp': gdp,
+             
+            })
+
+
+
+        def my_sort(e):
+            return float(e["gdp"])
+        records.sort(key=my_sort, reverse=True)
+
+
+        for record in records:
+            writer.writerow(record)
+
+
+
+
+
+
+
+
 
     def sort_csv_file(self, filename, output_filename, column_name):
 
@@ -288,6 +364,10 @@ class Main():
 
         # self.sort_csv_file(self.output_filename,self.output_filename2, 'significance')
         self.sort_csv_file(self.output_filename,self.output_filename2, 'population')
+
+
+
+        self.script4_analyse_countries()
 
 
 
