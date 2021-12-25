@@ -1,0 +1,14 @@
+
+
+
+found this list of country locations:
+
+
+https://developers.google.com/public-data/docs/canonical/countries_csv
+
+
+
+found capitals:
+
+https://github.com/icyrockcom/country-capitals/edit/master/data/country-list.csv
+

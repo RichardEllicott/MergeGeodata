@@ -1,8 +1,0 @@
-
-
-
-found this list of country locations:
-
-
-https://developers.google.com/public-data/docs/canonical/countries_csv
-
