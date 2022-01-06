@@ -14,7 +14,7 @@ https://public.opendatasoft.com/explore/dataset/geonames-all-cities-with-a-popul
 joining them up for video game data purposes (useful data for making a geo-strategy game)
 
 
-useful for geogarphic role playing games, and game dev but not perfect data, some countries wouldn't have had recent gdp data like Venezuela
+useful for geographic role playing games, and game dev but not perfect data, some countries wouldn't have had recent gdp data like Venezuela
 
 
 
