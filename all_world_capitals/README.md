@@ -1,6 +1,6 @@
 all countries of the world with approx gdp and population (including taiwan)
 
-also capital city and capital city coordinates
+also capital city and capital city coordinates (in decimal of longitude(N)/latitude(E) )
 
 ordered by countries total gdp to give worlds most significant countries at top
 
