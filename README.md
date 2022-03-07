@@ -1,3 +1,12 @@
+this project is really just a collection of data, how to handle it, intended mainly for video game usage not science
+
+really i'm just dealing with problems like:
+
+  -what are the most important cities to put on the map (for a geopolitical game), list of capitals/nations rough gdp etc
+  -how to i figure out where the various territories are
+  -what are the most important stars if making a space game
+  
+
 
 
 merging geodata from worlbank:
@@ -15,6 +24,9 @@ joining them up for video game data purposes (useful data for making a geo-strat
 
 
 useful for geographic role playing games, and game dev but not perfect data, some countries wouldn't have had recent gdp data like Venezuela
+
+
+
 
 
 
